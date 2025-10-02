@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo "Running pre-commit hook: generating README.md..."
+uv run ./tools/generate_readme.py
+
+# Check if the command was successful
+if [ $? -ne 0 ]; then
+	echo "Error: README.md generation failed."
+	exit 1
+fi
+
+# Add the generated README.md to the staging area
+git add README.md
+echo "README.md successfully generated and added to staging."
+
+exit 0

@@ -2,6 +2,7 @@
 
 Drop-in to bin goodies. Usually zero-dependency, except for the language it's
 written in.
+
 <!-- START GOODIES SECTION -->
 ## [`bin/chrome_to_cookiejar`](./bin/chrome_to_cookiejar)
 
@@ -31,7 +32,7 @@ In `~/.local/share/chezmoi/.chezmoiexternal.toml
 ```toml
 [".local/bin/chrome_to_cookiejar"]
 type = "file"
-url = "https://raw.githubusercontent.com/irth/goodies/94b5ccf121009dc6587645ae0f4ce41e17392660/bin/chrome_to_cookiejar"
+url = "https://raw.githubusercontent.com/irth/goodies/2fa3e2d20c6c8880cdb73ef70b7ad4f34071bbc4/bin/chrome_to_cookiejar"
 executable = true
 ```
 
@@ -42,7 +43,7 @@ executable = true
  && echo Ensuring '~/.local/bin' exists... \
  && mkdir -p '~/.local/bin' \
  && echo Downloading... \
- && curl -s https://raw.githubusercontent.com/irth/goodies/94b5ccf121009dc6587645ae0f4ce41e17392660/bin/chrome_to_cookiejar -o '~/.local/bin/chrome_to_cookiejar' \
+ && curl -s https://raw.githubusercontent.com/irth/goodies/2fa3e2d20c6c8880cdb73ef70b7ad4f34071bbc4/bin/chrome_to_cookiejar -o '~/.local/bin/chrome_to_cookiejar' \
  && chmod +x '~/.local/bin/chrome_to_cookiejar' \
  && echo 'Installed into' '~/.local/bin/chrome_to_cookiejar' \
  && echo 'Make sure ~/.local/bin is in your $PATH' )
