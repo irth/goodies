@@ -19,7 +19,6 @@ Outputs to stdout.
 
 Install:
 ```bash
-chrome_to_cookiejar
 ( curl https://raw.githubusercontent.com/irth/goodies/refs/heads/main/bin/chrome_to_cookiejar -o /tmp/goodie_chrome_to_cookiejar \
  && echo Press ENTER to read the code. You will be asked for confirmation afterwards. \
  && read \

@@ -4,7 +4,6 @@ import shlex
 import sys
 goodie_path = pathlib.Path(sys.argv[1])
 goodie_name = goodie_path.name
-print(goodie_name)
 
 install_path='~/.local/bin'
 raw_url = f"https://raw.githubusercontent.com/irth/goodies/refs/heads/main/bin/{goodie_name}"
