@@ -15,7 +15,7 @@ copied straight from the Chrome devtools UI into a yt-dlp compatible format
 
 Outputs to stdout.
 
-![screencast of chrome_to_cookiejar](./media/chrome_to_cookiejar.gif)
+![screencast of chrome_to_cookiejar](./media/chrome_to_cookiejar_1.gif)
 
 Install:
 ```bash
