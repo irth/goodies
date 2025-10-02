@@ -1,123 +1,147 @@
 #!/usr/bin/env python3
+"""
+**Converts cookies copied straight from the Chrome devtools UI into a yt-dlp
+compatible format (Mozilla/Netscape cookies.txt)**
 
-import io
-import pathlib
-import shutil
-import subprocess
+- `chrome_to_cookiejar` - read from stdin
+- `chrome_to_cookiejar -` - read from stdin
+- `chrome_to_cookiejar clip` - read from clipboard (suports pbpaste, wl-paste,
+  xclip and xsel, but only pbpaste was tested)
+- `chrome_to_cookiejar ./path/to/file` - read from file
+
+Outputs to stdout.
+"""
+
 import sys
-from datetime import datetime
 
-"""
-Figure out which command for clipboard use is available
-"""
+def help():
+    print(__doc__.strip())
+    exit(0)
 
-CLIPBOARD_COMMANDS = {
-    "pbpaste": [],
-    "wl-paste": ["-n", "-t", "text"],
-    "xclip": ["-selection", "CLIPBOARD", "-o"],
-    "xsel": ["-b", "-o"],
-}
+def main():
+    import io
+    import pathlib
+    import shutil
+    import subprocess
+    from datetime import datetime
 
+    """
+    Figure out which command for clipboard use is available
+    """
 
-AVAILABLE_CLIPBOARD_COMMAND = None
-
-for binary, args in CLIPBOARD_COMMANDS.items():
-    path = shutil.which(binary)
-    if path is not None:
-        AVAILABLE_CLIPBOARD_COMMAND = [str(path), *args]
-        break
-
-
-def paste() -> str:
-    if AVAILABLE_CLIPBOARD_COMMAND is None:
-        print("no supported clipboard tools found in PATH", file=sys.stderr)
-        print("supported tools: pbpaste, wl-paste, xclip, xsel", file=sys.stderr)
-        exit(1)
-    p = subprocess.run(
-        AVAILABLE_CLIPBOARD_COMMAND, text=True, check=True, capture_output=True
-    )
-    return p.stdout.strip() + "\n"
+    CLIPBOARD_COMMANDS = {
+        "pbpaste": [],
+        "wl-paste": ["-n", "-t", "text"],
+        "xclip": ["-selection", "CLIPBOARD", "-o"],
+        "xsel": ["-b", "-o"],
+    }
 
 
-"""
-Figure out the source of the cookies copied from chrome
+    AVAILABLE_CLIPBOARD_COMMAND = None
 
-- no argument - stdin
-- "-" - stdin
-- "clip" or "clipboard" - try to paste from clipboard
-- "./path/to/file" - read from file
-"""
-source_arg = "-" if len(sys.argv) < 2 else sys.argv[1]
-
-chrome_cookies = None
-
-if source_arg == "-":
-    chrome_cookies = sys.stdin
-elif source_arg == "clip" or source_arg == "clipboard":
-    chrome_cookies = io.StringIO(paste())
-else:
-    file_path = pathlib.Path(source_arg)
-    chrome_cookies = file_path.open("r")
+    for binary, args in CLIPBOARD_COMMANDS.items():
+        path = shutil.which(binary)
+        if path is not None:
+            AVAILABLE_CLIPBOARD_COMMAND = [str(path), *args]
+            break
 
 
-"""
-Print the Mozilla formatted cookies to stdout
-"""
-
-print("# HTTP Cookie File")
-
-for line in chrome_cookies:
-    line = line.strip()
-    if len(line.strip()) == 0:
-        continue
-    split = line.split("\t")
-    if len(split) != 12:
-        print("# couldn't parse, expected 12 tab separated values")
-        print("#", repr(line))
-        continue
-    (
-        name,
-        value,
-        domain,
-        path,
-        expires,
-        size,
-        http_only,
-        secure,
-        same_site,
-        partition_key_site,
-        cross_site,
-        priority,
-    ) = split
-
-    subdomains = False
-    if domain.startswith("."):
-        subdomains = True
-
-    try:
-        print(
-            "\t".join(
-                [
-                    domain,
-                    "TRUE" if subdomains else "FALSE",
-                    path,
-                    "TRUE" if "✓" in secure else "FALSE",
-                    str(
-                        int(
-                            datetime.fromisoformat(
-                                expires.replace("Z", "+00:00")
-                            ).timestamp()
-                        )
-                    )
-                    if expires != "Session"
-                    else "",
-                    name,
-                    value,
-                ]
-            )
+    def paste() -> str:
+        if AVAILABLE_CLIPBOARD_COMMAND is None:
+            print("no supported clipboard tools found in PATH", file=sys.stderr)
+            print("supported tools: pbpaste, wl-paste, xclip, xsel", file=sys.stderr)
+            exit(1)
+        p = subprocess.run(
+            AVAILABLE_CLIPBOARD_COMMAND, text=True, check=True, capture_output=True
         )
-    except Exception as e:
-        print()
-        print("# couldn't parse:", e)
-        print("#", repr(line))
-        print()
+        return p.stdout.strip() + "\n"
+
+
+    """
+    Figure out the source of the cookies copied from chrome
+
+    - no argument - stdin
+    - "-" - stdin
+    - "clip" or "clipboard" - try to paste from clipboard
+    - "./path/to/file" - read from file
+    """
+    source_arg = "-" if len(sys.argv) < 2 else sys.argv[1]
+
+    chrome_cookies = None
+
+    if source_arg == "-":
+        chrome_cookies = sys.stdin
+    elif source_arg == "clip" or source_arg == "clipboard":
+        chrome_cookies = io.StringIO(paste())
+    else:
+        file_path = pathlib.Path(source_arg)
+        chrome_cookies = file_path.open("r")
+
+
+    """
+    Print the Mozilla formatted cookies to stdout
+    """
+
+    print("# HTTP Cookie File")
+
+    for line in chrome_cookies:
+        line = line.strip()
+        if len(line.strip()) == 0:
+            continue
+        split = line.split("\t")
+        if len(split) != 12:
+            print("# couldn't parse, expected 12 tab separated values")
+            print("#", repr(line))
+            continue
+        (
+            name,
+            value,
+            domain,
+            path,
+            expires,
+            size,
+            http_only,
+            secure,
+            same_site,
+            partition_key_site,
+            cross_site,
+            priority,
+        ) = split
+
+        subdomains = False
+        if domain.startswith("."):
+            subdomains = True
+
+        try:
+            print(
+                "\t".join(
+                    [
+                        domain,
+                        "TRUE" if subdomains else "FALSE",
+                        path,
+                        "TRUE" if "✓" in secure else "FALSE",
+                        str(
+                            int(
+                                datetime.fromisoformat(
+                                    expires.replace("Z", "+00:00")
+                                ).timestamp()
+                            )
+                        )
+                        if expires != "Session"
+                        else "",
+                        name,
+                        value,
+                    ]
+                )
+            )
+        except Exception as e:
+            print()
+            print("# couldn't parse:", e)
+            print("#", repr(line))
+            print()
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--help":
+            help()
+    main()
