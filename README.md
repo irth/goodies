@@ -30,7 +30,7 @@ is detected.
 
 ### Screencasts
 
-![telegram_macos_copy_fix.gif](./media/telegram_macos_copy_fix.gif)
+![telegram_macos_copy_fix_1.gif](./media/telegram_macos_copy_fix_1.gif)
 
 
 
@@ -43,7 +43,7 @@ In `~/.local/share/chezmoi/.chezmoiexternal.toml`
 ```toml
 [".local/bin/telegram_macos_copy_fix"]
 type = "file"
-url = "https://raw.githubusercontent.com/irth/goodies/4b14056611b06c5f9e493078d70825909b450416/bin/telegram_macos_copy_fix"
+url = "https://raw.githubusercontent.com/irth/goodies/a1e560c9833d3af2a4dd1f5c2a512bed07b89153/bin/telegram_macos_copy_fix"
 executable = true
 ```
 
@@ -54,7 +54,7 @@ executable = true
  && echo Ensuring '~/.local/bin' exists... \
  && mkdir -p '~/.local/bin' \
  && echo Downloading... \
- && curl -s https://raw.githubusercontent.com/irth/goodies/4b14056611b06c5f9e493078d70825909b450416/bin/telegram_macos_copy_fix -o '~/.local/bin/telegram_macos_copy_fix' \
+ && curl -s https://raw.githubusercontent.com/irth/goodies/a1e560c9833d3af2a4dd1f5c2a512bed07b89153/bin/telegram_macos_copy_fix -o '~/.local/bin/telegram_macos_copy_fix' \
  && chmod +x '~/.local/bin/telegram_macos_copy_fix' \
  && echo 'Installed into' '~/.local/bin/telegram_macos_copy_fix' \
  && echo 'Make sure ~/.local/bin is in your $PATH' )
@@ -90,7 +90,7 @@ In `~/.local/share/chezmoi/.chezmoiexternal.toml`
 ```toml
 [".local/bin/chrome_to_cookiejar"]
 type = "file"
-url = "https://raw.githubusercontent.com/irth/goodies/4b14056611b06c5f9e493078d70825909b450416/bin/chrome_to_cookiejar"
+url = "https://raw.githubusercontent.com/irth/goodies/a1e560c9833d3af2a4dd1f5c2a512bed07b89153/bin/chrome_to_cookiejar"
 executable = true
 ```
 
@@ -101,7 +101,7 @@ executable = true
  && echo Ensuring '~/.local/bin' exists... \
  && mkdir -p '~/.local/bin' \
  && echo Downloading... \
- && curl -s https://raw.githubusercontent.com/irth/goodies/4b14056611b06c5f9e493078d70825909b450416/bin/chrome_to_cookiejar -o '~/.local/bin/chrome_to_cookiejar' \
+ && curl -s https://raw.githubusercontent.com/irth/goodies/a1e560c9833d3af2a4dd1f5c2a512bed07b89153/bin/chrome_to_cookiejar -o '~/.local/bin/chrome_to_cookiejar' \
  && chmod +x '~/.local/bin/chrome_to_cookiejar' \
  && echo 'Installed into' '~/.local/bin/chrome_to_cookiejar' \
  && echo 'Make sure ~/.local/bin is in your $PATH' )
