@@ -1,5 +1,7 @@
 #!/usr/bin/env swift
 
+/* DISCLAIMER: vibe coded */
+
 import AppKit
 
 class PasteboardMonitor {
@@ -110,6 +112,8 @@ if CommandLine.arguments.contains("--help") || CommandLine.arguments.contains("-
     that causes double-paste in iMessage**
 
     Requires: `swiftc`.
+
+    **Disclaimer: this was vibe-coded. I don't want to do macOS dev.**
     
     When you copy an image from full screen view in Telegram, it creates 2
     separate pasteboard items instead of 1 item with multiple representations.

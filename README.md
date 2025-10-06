@@ -11,6 +11,8 @@ that causes double-paste in iMessage**
 
 Requires: `swiftc`.
 
+**Disclaimer: this was vibe-coded. I don't want to do macOS dev.**
+
 When you copy an image from full screen view in Telegram, it creates 2
 separate pasteboard items instead of 1 item with multiple representations.
 This causes images to paste twice in iMessage.
@@ -35,7 +37,7 @@ In `~/.local/share/chezmoi/.chezmoiexternal.toml
 ```toml
 [".local/bin/telegram_macos_copy_fix"]
 type = "file"
-url = "https://raw.githubusercontent.com/irth/goodies/4e92c2b3526a19b3a0ab75effed69d7906bd5c54/bin/telegram_macos_copy_fix"
+url = "https://raw.githubusercontent.com/irth/goodies/08f6f502f8e0f3a3f1e9f651146e2a928de50f08/bin/telegram_macos_copy_fix"
 executable = true
 ```
 
@@ -46,7 +48,7 @@ executable = true
  && echo Ensuring '~/.local/bin' exists... \
  && mkdir -p '~/.local/bin' \
  && echo Downloading... \
- && curl -s https://raw.githubusercontent.com/irth/goodies/4e92c2b3526a19b3a0ab75effed69d7906bd5c54/bin/telegram_macos_copy_fix -o '~/.local/bin/telegram_macos_copy_fix' \
+ && curl -s https://raw.githubusercontent.com/irth/goodies/08f6f502f8e0f3a3f1e9f651146e2a928de50f08/bin/telegram_macos_copy_fix -o '~/.local/bin/telegram_macos_copy_fix' \
  && chmod +x '~/.local/bin/telegram_macos_copy_fix' \
  && echo 'Installed into' '~/.local/bin/telegram_macos_copy_fix' \
  && echo 'Make sure ~/.local/bin is in your $PATH' )
@@ -81,7 +83,7 @@ In `~/.local/share/chezmoi/.chezmoiexternal.toml
 ```toml
 [".local/bin/chrome_to_cookiejar"]
 type = "file"
-url = "https://raw.githubusercontent.com/irth/goodies/4e92c2b3526a19b3a0ab75effed69d7906bd5c54/bin/chrome_to_cookiejar"
+url = "https://raw.githubusercontent.com/irth/goodies/08f6f502f8e0f3a3f1e9f651146e2a928de50f08/bin/chrome_to_cookiejar"
 executable = true
 ```
 
@@ -92,7 +94,7 @@ executable = true
  && echo Ensuring '~/.local/bin' exists... \
  && mkdir -p '~/.local/bin' \
  && echo Downloading... \
- && curl -s https://raw.githubusercontent.com/irth/goodies/4e92c2b3526a19b3a0ab75effed69d7906bd5c54/bin/chrome_to_cookiejar -o '~/.local/bin/chrome_to_cookiejar' \
+ && curl -s https://raw.githubusercontent.com/irth/goodies/08f6f502f8e0f3a3f1e9f651146e2a928de50f08/bin/chrome_to_cookiejar -o '~/.local/bin/chrome_to_cookiejar' \
  && chmod +x '~/.local/bin/chrome_to_cookiejar' \
  && echo 'Installed into' '~/.local/bin/chrome_to_cookiejar' \
  && echo 'Make sure ~/.local/bin is in your $PATH' )
