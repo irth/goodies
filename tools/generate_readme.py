@@ -2,7 +2,6 @@
 import tomlkit
 import io
 import subprocess
-import glob
 import subprocess
 import pathlib
 import shlex
@@ -28,9 +27,9 @@ def get_script_language(goodie_source: str):
     first_line = goodie_source.splitlines()[0]
     if first_line.strip() == "#!/usr/bin/env python3":
         return "python"
-    raise RuntimeException(f"unknown shebang line for {goodie_path}: {first_line}")
+    raise RuntimeError(f"unknown shebang line for {goodie_source}: {first_line}")
 
-def print_script_doc(goodie_path: str):
+def print_script_doc(goodie_path: pathlib.Path):
     p = subprocess.run([str(goodie_path), "--help"], check=True, capture_output=True, text=True)
     print_to_buffer(p.stdout.strip())
     print_to_buffer()
@@ -66,7 +65,6 @@ def print_install_guide(goodie_name: str):
     install_path=install_dir+'/'+goodie_name
 
     raw_url = f"https://raw.githubusercontent.com/irth/goodies/{latest_commit_hash}/bin/{goodie_name}"
-    tmp_path = '/tmp/goodie_'+goodie_name
     command = "( " + " \\\n && ".join([
         'echo',
         'echo Ensuring ' + shlex.quote(install_dir) + ' exists...',
@@ -109,7 +107,7 @@ def print_all_goodie_sections():
     for goodie_path in (BIN_PATH).glob("*"):
         goodie_path = pathlib.Path(goodie_path)
         goodie_name = goodie_path.name
-        goodie_source = goodie_path.read_text()
+
         print_header(goodie_name)
         print_script_doc(goodie_path)
         print_screencasts(goodie_name)

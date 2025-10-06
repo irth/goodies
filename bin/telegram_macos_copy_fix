@@ -1,0 +1,133 @@
+#!/usr/bin/env swift
+
+import AppKit
+
+class PasteboardMonitor {
+    private let pasteboard = NSPasteboard.general
+    private var lastChangeCount = 0
+    
+    func start() {
+        print("Monitoring for Telegram copy bug...")
+        print("When detected, clipboard will be automatically fixed.")
+        print("Press Ctrl+C to stop\n")
+        
+        // Monitor when Telegram is deactivated
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self,
+            selector: #selector(appDidDeactivate(_:)),
+            name: NSWorkspace.didDeactivateApplicationNotification,
+            object: nil
+        )
+        
+        RunLoop.current.run()
+    }
+    
+    @objc private func appDidDeactivate(_ notification: Notification) {
+        // Check if Telegram was deactivated
+        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+              app.bundleIdentifier == "ru.keepcoder.Telegram" else {
+            return
+        }
+        
+        // Only process if clipboard changed
+        let currentChangeCount = pasteboard.changeCount
+        guard currentChangeCount != lastChangeCount else { return }
+        lastChangeCount = currentChangeCount
+        
+        // Get pasteboard items
+        guard let items = pasteboard.pasteboardItems,
+              items.count == 2 else {
+            return
+        }
+        
+        // Check if item 1 has file URL and item 2 has TIFF
+        let item1HasFileURL = items[0].types.contains(.fileURL)
+        let item2HasTiff = items[1].types.contains(.tiff)
+        
+        if item1HasFileURL && item2HasTiff {
+            print("🐛 DETECTED: Telegram's buggy image copy!")
+            print("   Found 2 separate items (file URL + TIFF)")
+            
+            // Extract the data from both items
+            let fileURLString = items[0].string(forType: .fileURL)
+            let tiffData = items[1].data(forType: .tiff)
+            
+            // Create a single merged item with both representations
+            let mergedItem = NSPasteboardItem()
+            
+            // Add file URL representation
+            if let fileURLString = fileURLString {
+                mergedItem.setString(fileURLString, forType: .fileURL)
+            }
+            
+            // Add TIFF representation
+            if let tiffData = tiffData {
+                mergedItem.setData(tiffData, forType: .tiff)
+                
+                // Also add PNG representation for better compatibility
+                if let image = NSImage(data: tiffData),
+                   let pngData = image.pngData {
+                    mergedItem.setData(pngData, forType: .png)
+                }
+            }
+            
+            // Clear and write the merged item
+            pasteboard.clearContents()
+            pasteboard.writeObjects([mergedItem])
+            
+            // Update our change count to avoid re-processing
+            lastChangeCount = pasteboard.changeCount
+            
+            print("✅ FIXED: Merged into 1 item with multiple representations")
+            print("   Item now contains:")
+            if fileURLString != nil { print("   - File URL") }
+            if tiffData != nil { print("   - TIFF image") }
+            if let tiffData = tiffData,
+               let image = NSImage(data: tiffData),
+               image.pngData != nil {
+                print("   - PNG image")
+            }
+            print("   → Should paste correctly in iMessage now!\n")
+        }
+    }
+}
+
+// Extension to convert NSImage to PNG
+extension NSImage {
+    var pngData: Data? {
+        guard let tiffRepresentation = self.tiffRepresentation,
+              let bitmapImage = NSBitmapImageRep(data: tiffRepresentation) else {
+            return nil
+        }
+        return bitmapImage.representation(using: .png, properties: [:])
+    }
+}
+
+// Check for help flag
+if CommandLine.arguments.contains("--help") || CommandLine.arguments.contains("-h") {
+    print("""
+    **Monitors and automatically fixes Mac version of Telegram's image copy bug
+    that causes double-paste in iMessage**
+
+    Requires: `swiftc`.
+    
+    When you copy an image from full screen view in Telegram, it creates 2
+    separate pasteboard items instead of 1 item with multiple representations.
+    This causes images to paste twice in iMessage.
+    
+    This tool monitors your clipboard and automatically fixes it when the bug
+    is detected.
+    
+    **Usage:**
+    
+    - Add `telegram_macos_copy_fix` to autostart somehow. E.g. put it in
+      [AeroSpace](https://github.com/nikitabobko/aerospace)'s
+      `after-startup-command` setting. The script has a `#!` line so as long as
+      you have `swiftc` it should work.
+    """)
+    exit(0)
+}
+
+// Start monitoring
+let monitor = PasteboardMonitor()
+monitor.start()
